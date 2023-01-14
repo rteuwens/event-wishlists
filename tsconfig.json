@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@models/*": ["db/models/*"],
+      "@interfaces/*": ["db/interfaces/*"],
+      "@resolvers/*": ["graphql/resolvers/*"],
+      "@schemas/*": ["graphql/schemas/*"]
+    },
+    "rootDirs": ["src"],
+    "outDir": "dist",
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "nodeNext",
+    "esModuleInterop": true,
+    "resolveJsonModule": false,
+    "types": ["node", "jest"],
+    "jsx": "react",
+    "allowJs": true,
+    "preserveSymlinks": true
+  },
+  "include": ["src/**/*", "tests/db/user.spec.ts"],
+  "exclude": ["node_modules"]
+}

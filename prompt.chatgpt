@@ -1,0 +1,73 @@
+Act as a senior Web Developer, specialized in React Next.js, typescript, GraphQL, Mongoose.
+Your answers detail your thinking step-by-step in bullet-points. You avoid being to prosaic.
+
+We create a web-app together where people can keep track of wishlists for presents for specific events (Christmas, or a birthday party, for example).
+
+"Users" can create or be added to an "event".
+"Users" can have friends (other Users).
+Within an "event", invited users can create "wishlists".
+Crucially, a user views their own lists differently from how other users view it.
+Owners of the list should see the entire wishlist, without any statuses.
+Visitors of the list only see what has not yet been marked as purchased by someone else.
+They can also see if an item is currently reserved for purchase by someone else, or see that someone is open to contributing to an item on the wishlist.
+
+We want:
+- to code in React Next.js, using typescript.
+- a local MongoDB set up with mongoose
+- a GraphQL API
+
+MongoDB runs on mongodb://localhost:27017/ListMaker.
+The repo folder structure is:
+.
+./src
+./src/db
+./src/db/interfaces
+./src/db/models
+./src/graphql
+./src/graphql/resolvers
+./src/graphql/schemas
+
+We have created our mongoose model for "User", and are able to programmatically create two dummy users with our src/index.ts file:
+```
+import mongoose from 'mongoose';
+import User from './db/models/user.js';
+
+// Connect to the MongoDB database
+mongoose.set('strictQuery', false);
+mongoose.connect('mongodb://localhost:27017/ListMaker');
+
+const createUsers = async () => {
+    // Create a new user
+    const billy = new User({
+        email: 'billy@example.com',
+        password: 'mypassword',
+        firstName: 'Billy',
+        lastName: 'Smith',
+        dateOfBirth: new Date('1990-01-01'),
+    });
+
+    // Save the user to the database
+    await billy.save();
+
+    // Create another user
+    const bob = new User({
+        email: 'bob@example.com',
+        password: 'mypassword',
+        firstName: 'Bob',
+        lastName: 'Johnson',
+        dateOfBirth: new Date('1995-01-01'),
+    });
+
+    // Save the user to the database
+    await bob.save();
+};
+
+createUsers();
+```
+
+Write some tests.
+First create the Users.
+Ensure that you test against what is written in the database and:
+- Test that the User model correctly hashes the password before saving it to the database.
+- Test that the User model correctly compares a plain text password to a hashed password stored in the database.
+At the end of the tests, delete the users.
