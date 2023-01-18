@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             // Use a regular expression to validate the email format
-            match: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            match: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, "Email address invalid."]
         },
         password: {
             type: String,
@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
             type: Date,
             required: true,
             default: Date.now,
+        },
+        userName: {
+            type: String,
+            required: false,
         },
         firstName: {
             type: String,
