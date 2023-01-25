@@ -18,10 +18,10 @@ describe('User Model', () => {
         const user = new User(userData);
         await user.save();
     });
-    
+
     afterAll(async () => {
         await User.deleteMany({});
-        await mongoose.connection.dropDatabase()
+        await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
     });
 
@@ -29,6 +29,40 @@ describe('User Model', () => {
         const user = await User.findOne({ email: 'test@example.com' });
         expect(user).toBeInstanceOf(User);
         expect(user.email).toBe(userData.email);
+    });
+
+    it('should not allow duplicate email addresses', async () => {
+        const duplicateUser = new User(userData);
+        try {
+            await duplicateUser.save();
+        } catch (error) {
+            expect(error.name).toEqual('MongoServerError');
+            expect(error.code).toEqual(11000);
+        }
+    });
+
+    it('should reject invalid email addresses', async () => {
+        const user = new User({
+            email: 'testexample.com',
+            password: 'ThisIsaVal1dPassword',
+        });
+        try {
+            await user.save();
+        } catch (error) {
+            expect(error).toBeInstanceOf(mongoose.Error.ValidationError);
+        }
+    });
+
+    it('should reject invalid passwords', async () => {
+        const user = new User({
+            email: 'faulypassword@example.com',
+            password: 'testpassword',
+        });
+        try {
+            await user.save();
+        } catch (error) {
+            expect(error).toBeInstanceOf(mongoose.Error.ValidationError);
+        }
     });
 
     it('should have a hashed password', async () => {
@@ -43,7 +77,8 @@ describe('User Model', () => {
 
     it('should correctly match password to log in', async () => {
         const user = await User.findOne({ email: userData.email });
-        const match = await bcrypt.compare(userData.password, user.password)
-        expect(match).toBeTruthy
+        const match = await user.verify(userData.password)
+        expect(match).toBeTruthy;
     });
+
 });

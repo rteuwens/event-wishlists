@@ -1,6 +1,22 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IUser } from '../interfaces/IUser.js';
+import * as path from 'path';
+import * as argon2 from 'argon2';
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+
+
+function passwordValidator(value: string) {
+    const has_digit = /\d/.test(value);
+    const has_uppercase = /[A-Z]/.test(value);
+    const has_lowercase = /[a-z]/.test(value);
+    const has_10_chars = value.length >= 10;
+
+    if (has_digit && has_uppercase && has_lowercase && has_10_chars) {
+        return true;
+    }
+    return 'Password should contain at least one number, one uppercase letter, one lowercase letter, and be at least 10 characters long.'
+}
 
 const userSchema = new mongoose.Schema(
     {
@@ -14,11 +30,15 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             // Use a regular expression to validate the email format
-            match: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, "Email address invalid."]
+            match: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 'Email address invalid.']
         },
         password: {
             type: String,
             required: true,
+            validate: {
+                validator: passwordValidator,
+                message: (props: mongoose.Error.ValidatorError) => props.value
+            }
         },
         createdAt: {
             type: Date,
@@ -28,6 +48,7 @@ const userSchema = new mongoose.Schema(
         userName: {
             type: String,
             required: false,
+            match: [/^[a-zA-Z0-9]+$/, 'is invalid']
         },
         firstName: {
             type: String,
@@ -56,17 +77,14 @@ const userSchema = new mongoose.Schema(
 );
 
 // Hash the password before saving the user to the database
-userSchema.pre<IUser>('save', async function(this: IUser, next) {
-    try {
-        if (!this.isModified('password')) return next();
-        const hashedPassword = await bcrypt.hash(this.password, 10);
-        this.password = hashedPassword;
-        return next();
-    } catch (err: any) {
-        return next(err);
-    }
+userSchema.pre<IUser>('save', async function (this: IUser) {
+    if (!this.isModified('password')) return;
+    this.password = await argon2.hash(this.password);
 });
 
+userSchema.methods.verify = async function (password: string) {
+    return await argon2.verify(this.password, password);
+};
 
-const User = mongoose.model<IUser>('User', userSchema);
-export default User;
+
+export default mongoose.model<IUser>('User', userSchema);;

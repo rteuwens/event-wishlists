@@ -11,4 +11,5 @@ export interface IUser extends mongoose.Document {
     dateOfBirth?: Date;
     avatar?: string;
     friends?: mongoose.Types.ObjectId[];
+    verify(password: string): Promise<boolean>;
 }
