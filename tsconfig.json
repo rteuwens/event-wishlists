@@ -20,6 +20,6 @@
     "allowJs": true,
     "preserveSymlinks": true
   },
-  "include": ["src/**/*", "tests/db/user.spec.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "tests"]
 }
