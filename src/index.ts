@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
 import User from './db/models/user.js';
 import dotenv from "dotenv";
-import chalk from "chalk";
+import kleur from 'kleur';
 dotenv.config();
 
 // Connect to the MongoDB database
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGO_URL!, (err) => {
     if (err) {
-        console.error(chalk.red('Error connecting to the database: ${err}'));
+        console.error(kleur.bold().red('Error connecting to the database: ${err}'));
     } else {
-        console.log(chalk.green('Successfully connected to the database'));
+        console.log(kleur.bold().green('Successfully connected to the database'));
     }
 });
 

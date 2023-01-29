@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../../src/db/models/user';
 import dotenv from "dotenv";
-import chalk from "chalk";
+import kleur from 'kleur';
 dotenv.config();
 
 
@@ -16,9 +16,9 @@ describe('User Model', () => {
         mongoose.set('strictQuery', false);
         mongoose.connect(process.env.TEST_MONGO_URL!, (err) => {
             if (err) {
-                console.error(chalk.red('Error connecting to the database: ${err}'));
+                console.error(kleur.bold().red('Error connecting to the database: ${err}'));
             } else {
-                console.log(chalk.green('Successfully connected to the database'));
+                console.log(kleur.bold().green('Successfully connected to the database'));
             }
         });
         const user = new User(userData);
