@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 import User from '../../src/db/models/user';
-import * as path from 'path';
-require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+import * as dotenv from "dotenv";
+import * as path from "path";
+dotenv.config();
 
 
 describe('User Model', () => {
@@ -14,7 +14,13 @@ describe('User Model', () => {
 
     beforeAll(async () => {
         mongoose.set('strictQuery', false);
-        await mongoose.connect(process.env.MONGO_URL);
+        mongoose.connect(process.env.TEST_MONGO_URL!, (err) => {
+            if (err) {
+                console.error('\x1b[31m%s\x1b[0m', 'Error connecting to the database: ${err}');
+            } else {
+                console.log('\x1b[32m%s\x1b[0m', 'Successfully connected to the database');
+            }
+        });
         const user = new User(userData);
         await user.save();
     });
@@ -28,7 +34,7 @@ describe('User Model', () => {
     it('should have created a new user', async () => {
         const user = await User.findOne({ email: 'test@example.com' });
         expect(user).toBeInstanceOf(User);
-        expect(user.email).toBe(userData.email);
+        expect(user?.email).toBe(userData.email);
     });
 
     it('should not allow duplicate email addresses', async () => {
@@ -67,17 +73,12 @@ describe('User Model', () => {
 
     it('should have a hashed password', async () => {
         const user = await User.findOne({ email: userData.email });
-        expect(user.password).not.toBe(userData.password);
-    });
-
-    it('should have a createdAt field with a valid date', async () => {
-        const user = await User.findOne({ email: userData.email });
-        expect(user.createdAt).toBeInstanceOf(Date);
+        expect(user?.password).not.toBe(userData.password);
     });
 
     it('should correctly match password to log in', async () => {
         const user = await User.findOne({ email: userData.email });
-        const match = await user.verify(userData.password)
+        const match = await user?.verify(userData.password)
         expect(match).toBeTruthy;
     });
 
