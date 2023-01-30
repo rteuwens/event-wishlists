@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser } from '../interfaces/IUser.js';
+import { IUser } from './../../interfaces/IUser.js';
 import * as argon2 from 'argon2';
 
 

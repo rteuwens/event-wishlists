@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from './db/models/user.js';
+import User from './backend/models/user.js';
 import dotenv from "dotenv";
 import kleur from 'kleur';
 dotenv.config();
