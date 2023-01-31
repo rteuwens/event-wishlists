@@ -8,7 +8,7 @@ dotenv.config();
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGO_URL!, (err) => {
     if (err) {
-        console.error(kleur.bold().red('Error connecting to the database: ${err}'));
+        console.error(kleur.bold().red(`Error connecting to the database: ${err}`));
     } else {
         console.log(kleur.bold().green('Successfully connected to the database'));
     }
