@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { IWishlist, IWishlistItem, IWishlistOptions } from './IWishlist.js';
 
 export interface IUser extends mongoose.Document {
     _id: mongoose.Types.ObjectId;
@@ -12,4 +13,5 @@ export interface IUser extends mongoose.Document {
     avatar?: string;
     friends?: mongoose.Types.ObjectId[];
     verify(password: string): Promise<boolean>;
+    createWishlist(options: IWishlistOptions): Promise<IWishlist>;
 }

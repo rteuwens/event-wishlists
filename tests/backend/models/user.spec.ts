@@ -16,7 +16,7 @@ describe('User Model', () => {
         mongoose.set('strictQuery', false);
         mongoose.connect(process.env.TEST_MONGO_URL!, (err) => {
             if (err) {
-                console.error(kleur.bold().red('Error connecting to the database: ${err}'));
+                console.error(kleur.bold().red(`Error connecting to the database: ${err}`));
             } else {
                 console.log(kleur.bold().green('Successfully connected to the database'));
             }
@@ -80,6 +80,16 @@ describe('User Model', () => {
         const user = await User.findOne({ email: userData.email });
         const match = await user?.verify(userData.password)
         expect(match).toBeTruthy;
+    });
+
+    it('should be able to create a named, but empty wishlist', async () => {
+        const user = await User.findOne({ email: userData.email });
+        const options = { name: "TestUser's first wishlist", items:[]}
+        const wishlist = await user?.createWishlist(options);
+        expect(wishlist).toBeDefined();
+        expect(wishlist?.name).toBe(options.name);
+        expect(wishlist?.items.length).toBe(0);
+        expect(wishlist?.creator.toString()).toBe(user?._id.toString());
     });
 
 });
